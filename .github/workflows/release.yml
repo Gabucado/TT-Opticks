@@ -1,18 +1,20 @@
-name: Build LaTeX document
-on: [push]
+name: Build Thesis PDF
+on: [push, pull_request]
 jobs:
-    build_latex:
-        runs-on: ubuntu-latest
-        steps:
-            - name: setup repo
-              uses: actions/checkout@v4
-            - name: compile doc
-              uses: xu-cheng/latex-action@v3
-              with:
-                root_file: Thesis.tex
-                latexmk_use_lualatex: true
-            - name: upload artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: PDF
-                path: Thesis.pdf
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Compile Thesis with LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: Thesis.tex
+          # (optional) texlive_version: 2024
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: Thesis PDF
+          path: Thesis.pdf
+      - name: Release
+        uses: softprops/action-gh-release@v2
