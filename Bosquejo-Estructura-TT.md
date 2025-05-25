@@ -29,8 +29,7 @@ Se levantaron requisitos y realizó una investigación inicial solamente
 Se levantaron requisitos y se determinó que ya se contaba con una API y se buscaba un pipeline de integración de datos
 1. iteración
     - Levantamiento de requisitos
-    - Propuesta de producto
-    - Propuesta de arquitectura
+    - Propuesta de producto y arquitectura
     - Caracterización de proveedores
     - presupuesto y cotización
     - Implementación usando servicios de terceros
