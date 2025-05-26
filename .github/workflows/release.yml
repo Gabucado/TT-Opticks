@@ -1,45 +1,33 @@
-name: Build Thesis PDF
+name: CI
 
 on:
   push:
-    branches: [master]      # Change 'main' to your default branch if needed
+    branches: [master]
   pull_request:
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Compile Thesis with LaTeX
-        uses: xu-cheng/latex-action@v3
+      - name: Generate Book PDF
+        uses: hspaans/latexmk-action@v2.0.0
         with:
-          root_file: Thesis.tex
-          texlive_version: 2024
+          format: pdf
+          filename: Thesis.tex
 
-      - name: Upload PDF as artifact
+      - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: Thesis PDF
+          name: compiled-book
           path: Thesis.pdf
 
-  release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Download PDF artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: Thesis PDF
-
-      - name: Create GitHub Release
+      - name: Upload to Release (Release Only)
+        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: Thesis.pdf
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            Thesis.pdf
+          token: ${{ secrets.GITHUB_TOKEN }}
