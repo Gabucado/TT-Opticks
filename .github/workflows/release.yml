@@ -1,33 +1,45 @@
-name: CI
+name: Deploy PDF
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
   pull_request:
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate Book PDF
-        uses: hspaans/latexmk-action@v2.0.0
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v2
         with:
-          format: pdf
-          filename: Thesis.tex
+          root_file: Thesis.tex
+          # Optional: Add compilations for references (e.g., 2 compilations)
+          compiler: pdflatex
+          args: "-shell-escape -interaction=nonstopmode"
+          pre_compile: |
+            pdflatex -version
+          post_compile: |
+            echo "Compilation completed"
 
-      - name: Upload PDF
+      - name: Upload PDF as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: compiled-book
-          path: Thesis.pdf
+          name: thesis.pdf
+          path: thesis.pdf
 
-      - name: Upload to Release (Release Only)
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push'
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          files: |
-            Thesis.pdf
-          token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          CLEAN: true
+          SINGLE_COMMIT: true
+          FOLDER: .
+          TARGET_FOLDER: .  # Deploy root contents (or specify a subfolder)
+          # Remove GIT_CONFIG_* if you want to use GitHub's default bot identity
