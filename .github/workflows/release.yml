@@ -36,10 +36,10 @@ jobs:
         if: github.event_name == 'push'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          CLEAN: true
-          SINGLE_COMMIT: true
-          FOLDER: .
-          TARGET_FOLDER: .  # Deploy root contents (or specify a subfolder)
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          clean: true
+          single-commit: true
+          folder: .
+          target-folder: .  # Deploy root contents (or specify a subfolder)
           # Remove GIT_CONFIG_* if you want to use GitHub's default bot identity
